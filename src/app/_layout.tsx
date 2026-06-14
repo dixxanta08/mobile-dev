@@ -1,16 +1,52 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import React from 'react';
-import { useColorScheme } from 'react-native';
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import LottieView from "lottie-react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+SplashScreen.preventAutoHideAsync();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function RootLayout() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function prepare() {
+      await new Promise((resolve) => setTimeout(resolve, 2500));
+      setLoading(false);
+      await SplashScreen.hideAsync();
+    }
+
+    prepare();
+  }, []);
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <>
+      {loading ? (
+        <View style={styles.container}>
+          <LottieView
+            source={require("../../assets/lottie/splash.json")}
+            autoPlay
+            loop={false}
+            resizeMode="cover"
+            style={{
+              flex: 1,
+              width: "100%",
+              height: "100%",
+            }}
+          />
+        </View>
+      ) : (
+        <Stack screenOptions={{ headerShown: false }} />
+      )}
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#000000",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
